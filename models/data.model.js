@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 
 const dataSchema = new mongoose.Schema({
-  _id: { type: String},
   Seed_RepDate: { type: String},
   Seed_Year: { type: String },
   Seeds_YearWeek: { type: String },

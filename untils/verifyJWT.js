@@ -16,10 +16,8 @@ module.exports.isAuthen = async (req, res, next) => {
 
     try {
       const decoded = jwt.verify(token, config.tokenSettings.publicKey);
-      req.jwtDecode = decoded;
 
-      const getUser = await User.findOne({ _id: req.jwtDecode.userId });
-      if(getUser.token_version !== req.jwtDecode.token_version){
+      if(!decoded){
         res.statusCode = 401;
         return res.send({ message: "Invalid Access Token" });
       }
@@ -31,26 +29,5 @@ module.exports.isAuthen = async (req, res, next) => {
     next();
   } catch (error) {
     res.status(500).send({ message: "Invalid Access Token" });
-  }
-};
-
-module.exports.isAdmin = async (req, res, next) => {
-  try {
-    await this.isAuthen(req, res, async () => {
-      const user = await User.findOne({ _id: req.jwtDecode.userId });
-      
-      if (!user) {
-        return res.status(404).send({ message: "User not found" });
-      }
-
-      if (user.is_admin) {
-        next();
-      } else {
-        res.status(403).send({ message: "Access denied. You are not an admin" });
-      }
-    });
-  } catch (error) {
-    console.log('error',error);
-    res.status(500).send({ message: "Internal server error" });
   }
 };
